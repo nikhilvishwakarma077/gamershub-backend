@@ -1,85 +1,22 @@
-import mongoose, { Schema, Types } from "mongoose";
+import mongoose, { Schema } from "mongoose";
+import { IGamerProfile } from "../types/profile.types.js";
 
-
-// ================= INTERFACES =================
-
-interface SocialLinksType {
-    instagram: string;
-    discord: string;
-}
-
-interface Stats {
-    currentRank: string;
-    kdRatio: number;
-    headshotPercentage: number;
-}
-
-interface Clips {
-    title: string;
-    clipUrl: string[];
-    thumbnailUrl: string;
-    uploadedAt: Date;
-}
-
-interface Experience {
-    level: number;
-    yearsPlaying: number;
-    esportsExperience: number;
-}
-
-interface Availability {
-    status: "looking for team" | "open for scrims" | "busy";
-}
-
-interface TeamHistory {
-    teamName: string;
-    role: string;
-    duration: string;
-}
-
-interface Achievement {
-    title: string;
-    image: string;
-}
-
-interface GamerProfile {
-
-    userId: Types.ObjectId;
-    username: string;
-    uid: number;
-    age: number;
-    avatar: string;
-    banner: string;
-    bio: string;
-    country: string;
-    languages: string[];
-    role: string;
-    socialLinks : SocialLinksType;
-    stats: Stats;
-    clips: Clips[];
-    experience: Experience;
-    availability: Availability;
-    teamHistory: TeamHistory[];
-    achievements: Achievement[];
-    profileCompleted: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-} 
-
-
-
-const profileSchema = new Schema<GamerProfile>(
+const profileSchema = new Schema<IGamerProfile>(
     {
         userId: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: "User",
             required: true,
             unique: true,
+            index: true,
         },
 
         username: {
             type: String,
             required: true,
+            trim: true,
+            minlength: 3,
+            maxlength: 30,
         },
 
         uid: {
@@ -90,26 +27,33 @@ const profileSchema = new Schema<GamerProfile>(
         age: {
             type: Number,
             default: 18,
+            min: 1,
+            max: 100,
         },
 
         avatar: {
             type: String,
             default: "",
+            trim: true,
         },
 
         banner: {
             type: String,
             default: "",
+            trim: true,
         },
 
         bio: {
             type: String,
             default: "",
+            maxlength: 500,
+            trim: true,
         },
 
         country: {
             type: String,
             default: "",
+            trim: true,
         },
 
         languages: {
@@ -120,55 +64,63 @@ const profileSchema = new Schema<GamerProfile>(
         role: {
             type: String,
             default: "",
+            trim: true,
         },
 
         socialLinks: {
             instagram: {
                 type: String,
-                required: true,
-                default:"",
+                default: "",
+                trim: true,
+                required :true,
             },
 
             discord: {
                 type: String,
-                default:"",
+                default: "",
+                trim: true,
             },
         },
 
-  
         stats: {
             currentRank: {
                 type: String,
                 default: "",
+                trim: true,
             },
 
             kdRatio: {
                 type: Number,
                 default: 0,
+                min: 0,
             },
 
             headshotPercentage: {
                 type: Number,
                 default: 0,
+                min: 0,
+                max: 100,
             },
         },
 
- 
         clips: [
             {
                 title: {
                     type: String,
                     default: "",
+                    trim: true,
                 },
 
                 clipUrl: {
                     type: String,
                     default: "",
+                    trim: true,
                 },
 
                 thumbnailUrl: {
                     type: String,
                     default: "",
+                    trim: true,
                 },
 
                 uploadedAt: {
@@ -178,21 +130,23 @@ const profileSchema = new Schema<GamerProfile>(
             },
         ],
 
-
         experience: {
             level: {
                 type: Number,
                 default: 1,
+         
             },
 
             yearsPlaying: {
-                type: Number, 
+                type: Number,
                 default: 0,
+             
             },
 
             esportsExperience: {
                 type: Number,
                 default: 0,
+              
             },
         },
 
@@ -201,35 +155,38 @@ const profileSchema = new Schema<GamerProfile>(
                 teamName: {
                     type: String,
                     default: "",
+                    trim: true,
                 },
 
                 role: {
                     type: String,
                     default: "",
+                    trim: true,
                 },
 
                 duration: {
                     type: String,
                     default: "",
+                    trim: true,
                 },
             },
         ],
-
 
         achievements: [
             {
                 title: {
                     type: String,
                     default: "",
+                    trim: true,
                 },
 
                 image: {
                     type: String,
                     default: "",
+                    trim: true,
                 },
             },
         ],
-
 
         availability: {
             status: {
@@ -239,24 +196,18 @@ const profileSchema = new Schema<GamerProfile>(
                     "open for scrims",
                     "already in team",
                 ],
-
                 default: "looking for team",
             },
         },
-
 
         profileCompleted: {
             type: Boolean,
             default: false,
         },
     },
-
     {
         timestamps: true,
     }
 );
 
-export const Profile = mongoose.model<GamerProfile>(
-    "Profile",
-    profileSchema
-);
+export const Profile = mongoose.model<IGamerProfile>("Profile", profileSchema);

@@ -12,11 +12,33 @@ export interface IUser extends Document {
 
 const userSchema = new mongoose.Schema<IUser>(
     {
-        username: { type: String, required: true },
-        email: { type: String, required: true, unique: true },
-        password: { type: String, required: true },
-        isAdmin: { type: Boolean, default: false },
-        AccStatus: { type: String, default: "Active" },
+        username: {
+            type: String,
+            required: true,
+            trim: true,
+            minlength: 3,
+            maxlength: 30,
+        },
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+            lowercase: true,
+            trim: true,
+        },
+        password: {
+            type: String,
+            required: true,
+        },
+        isAdmin: {
+            type: Boolean,
+            default: false,
+        },
+        AccStatus: {
+            type: String,
+            enum: ["Active", "Suspended", "Banned"],
+            default: "Active",
+        },
 
     },
     { timestamps: true }

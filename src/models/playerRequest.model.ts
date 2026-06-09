@@ -1,28 +1,7 @@
 import mongoose, { Schema, Types } from "mongoose";
+import { IPlayerRequest } from "../types/playerRequest.types.js";
 
-export interface PlayerRequest {
-
-    userId: Types.ObjectId;
-    profileId : Types.ObjectId;
-
-    role: string; 
-
-    joiningType:
-    | "permanent"
-    | "temporary"
-    | "scrims only";
-
-    activeTime: string;
-
-    languagesComfortable: string[];
-
-    instagram: string;
-
-    expiresAt: Date;
-}
-
-
-const playerRequestSchema = new Schema<PlayerRequest>(
+const playerRequestSchema = new Schema<IPlayerRequest>(
 
     {
         userId: {
@@ -38,7 +17,8 @@ const playerRequestSchema = new Schema<PlayerRequest>(
 
         role: {
             type: String,
-            required: true
+            required: true,
+            trim: true,
         },
 
         joiningType: {
@@ -49,7 +29,9 @@ const playerRequestSchema = new Schema<PlayerRequest>(
 
         activeTime: {
             type: String,
-            required: true
+            required: true,
+            trim : true,
+            
         },
 
         languagesComfortable: {
@@ -59,7 +41,8 @@ const playerRequestSchema = new Schema<PlayerRequest>(
 
         instagram: {
             type: String,
-            required: true
+            required: true,
+            trim: true,
         },
 
         expiresAt: {
@@ -82,7 +65,7 @@ playerRequestSchema.index(
 );
 
 
-export const PlayerRequest = mongoose.model<PlayerRequest>(
+export const PlayerRequest = mongoose.model<IPlayerRequest>(
     "PlayerRequest",
     playerRequestSchema
 );

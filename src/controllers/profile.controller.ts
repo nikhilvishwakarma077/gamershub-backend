@@ -161,33 +161,33 @@ export const createProfile = async (req: AuthRequest, res: Response) => {
             },
 
             stats: {
-                currentRank:stats?.currentRank || "",
-                kdRatio:stats?.kdRatio || 0,
-                headshotPercentage:stats?.headshotPercentage || 0,
+                currentRank: stats?.currentRank || "",
+                kdRatio: stats?.kdRatio || 0,
+                headshotPercentage: stats?.headshotPercentage || 0,
             },
 
             experience: {
-                level:experience?.level || 1,
-                yearsPlaying:experience?.yearsPlaying || 0,
-                esportsExperience:experience?.esportsExperience || 0,
+                level: experience?.level || 1,
+                yearsPlaying: experience?.yearsPlaying || 0,
+                esportsExperience: experience?.esportsExperience || 0,
             },
 
             availability: {
-                status:availability?.status ||"looking for team",
+                status: availability?.status || "looking for team",
             },
 
             clips:
                 clips?.map((clip: any) => ({
-                    title:clip.title || "",
+                    title: clip.title || "",
                     clipUrl: clip.clipUrl || "",
-                    thumbnailUrl:clip.thumbnailUrl || "",
+                    thumbnailUrl: clip.thumbnailUrl || "",
                 })) || [],
 
             achievements:
                 achievements?.map(
                     (achievement: any) => ({
-                        title:achievement.title || "",
-                        image:achievement.image || "",
+                        title: achievement.title || "",
+                        image: achievement.image || "",
                     })
                 ) || [],
 
@@ -205,7 +205,7 @@ export const createProfile = async (req: AuthRequest, res: Response) => {
 
         return res.status(201).json({
             success: true,
-            message:"Profile created successfully",
+            message: "Profile created successfully",
             data: profile,
         });
 
@@ -280,26 +280,28 @@ export const getProfileById = async (req: Request, res: Response) => {
     }
 };
 
-
 export const getAllProfiles = async (req: Request, res: Response) => {
-
     try {
-
         const profiles = await Profile.find()
-            .select('username uid role avatar country languages experience availability')
-            .populate("userId", "name email")
-            .sort({ createdAt: -1 });
+            .select(
+                "username uid role avatar country languages experience availability"
+            )
+            .populate("userId", "username email")
+            .sort({ createdAt: -1 })
+            .lean();
 
         return res.status(200).json({
+            success: true,
             total: profiles.length,
-            profiles
+            profiles,
         });
 
     } catch (error) {
+        console.error("Get All Profiles Error:", error);
 
-        console.log(error);
         return res.status(500).json({
-            message: "Server Error"
+            success: false,
+            message: "Failed to fetch profiles",
         });
     }
 };

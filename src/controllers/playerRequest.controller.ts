@@ -71,8 +71,6 @@ export const createPlayerRequest = async (req: AuthRequest,res: Response) => {
     }
 };
 
-
-
 export const getAllPlayerRequests = async (req: Request,res: Response) => {
 
     try {
@@ -150,7 +148,6 @@ export const deletePlayerRequestById = async (req: AuthRequest,res: Response) =>
             });
         }
 
-        // ownership check
         if (playerRequest.userId.toString() !== userId.toString()) {
 
             return res.status(403).json({
