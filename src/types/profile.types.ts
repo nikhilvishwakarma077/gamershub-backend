@@ -14,7 +14,6 @@ export interface Stats {
 export interface Clip {
     title: string;
     clipUrl: string;
-    thumbnailUrl: string;
     uploadedAt: Date;
 }
 

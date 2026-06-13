@@ -117,12 +117,6 @@ const profileSchema = new Schema<IGamerProfile>(
                     trim: true,
                 },
 
-                thumbnailUrl: {
-                    type: String,
-                    default: "",
-                    trim: true,
-                },
-
                 uploadedAt: {
                     type: Date,
                     default: Date.now,
