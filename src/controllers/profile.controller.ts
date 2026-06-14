@@ -17,58 +17,63 @@ export const createProfile = async (req: AuthRequest, res: Response) => {
             });
         }
 
-        const {
-            username,
-            uid,
-            age,
-            avatar,
-            banner,
-            bio,
-            country,
-            languages,
-            role,
-            socialLinks,
-            stats,
-            experience,
-            availability,
-            clips,
-            achievements,
-            teamHistory,
-        } = req.body;
+        const existingProfile =
+            await Profile.findOne({ userId });
+
+        if (existingProfile) {
+            return res.status(400).json({
+                success: false,
+                message: "Profile already exists",
+            });
+        }
+
+        const { username, avatar, banner, bio, country, role } = req.body;
+
+        const uid = Number(req.body.uid);
+        const age = Number(req.body.age);
+
+        const languages = req.body.languages ? JSON.parse(req.body.languages) : [];
+
+        const socialLinks = req.body.socialLinks ? JSON.parse(req.body.socialLinks) : {};
+
+        const stats = req.body.stats ? JSON.parse(req.body.stats) : {};
+
+        const experience = req.body.experience ? JSON.parse(req.body.experience) : {};
+
+        const availability = req.body.availability ? JSON.parse(req.body.availability) : {};
+
+        const clips = req.body.clips ? JSON.parse(req.body.clips) : [];
+
+        const achievements = req.body.achievements ? JSON.parse(req.body.achievements) : [];
+
+        const teamHistory = req.body.teamHistory ? JSON.parse(req.body.teamHistory) : [];
+
+
+        stats.kdRatio = Number(stats.kdRatio);
+
+        stats.headshotPercentage = Number(stats.headshotPercentage);
+
+        experience.level = Number(experience.level);
+
+        experience.yearsPlaying = Number(experience.yearsPlaying);
+
+        experience.esportsExperience = Number(experience.esportsExperience);
+
 
         if (
-            !username ||
+            !username?.trim() ||
             !uid ||
-            !age ||
-            !country ||
-            !role ||
-            !socialLinks.instagram
+            !country?.trim() ||
+            !role?.trim() ||
+            !socialLinks?.instagram?.trim()
         ) {
             return res.status(400).json({
                 success: false,
                 message: "Required fields missing",
             });
         }
-        if (typeof username !== "string") {
-            return res.status(400).json({
-                success: false,
-                message: "Username must be string",
-            });
-        }
 
-        if (typeof uid !== "number") {
-            return res.status(400).json({
-                success: false,
-                message: "UID must be number",
-            });
-        }
 
-        if (typeof age !== "number") {
-            return res.status(400).json({
-                success: false,
-                message: "Age must be number",
-            });
-        }
 
         if (!Array.isArray(languages)) {
             return res.status(400).json({
@@ -77,26 +82,6 @@ export const createProfile = async (req: AuthRequest, res: Response) => {
             });
         }
 
-
-        if (
-            socialLinks?.instagram !== undefined &&
-            typeof socialLinks.instagram !== "string"
-        ) {
-            return res.status(400).json({
-                success: false,
-                message: "Instagram link must be a string",
-            });
-        }
-
-        if (
-            socialLinks?.discord !== undefined &&
-            typeof socialLinks.discord !== "string"
-        ) {
-            return res.status(400).json({
-                success: false,
-                message: "Discord link must be a string",
-            });
-        }
 
         if (
             !socialLinks ||
@@ -131,30 +116,34 @@ export const createProfile = async (req: AuthRequest, res: Response) => {
         }
 
 
-        const existingProfile =
-            await Profile.findOne({
-                userId,
-            });
 
-        if (existingProfile) {
-            return res.status(400).json({
-                success: false,
-                message: "Profile already exists",
-            });
-        }
+        const uploadedImages =
+            (req.files as Express.Multer.File[]) || [];
+
+        const mappedAchievements =
+            achievements?.map(
+                (achievement: any, index: number) => ({
+                    title: achievement?.title.trim() || "",
+                    image:
+                        uploadedImages[index]?.path || "",
+                })
+            ) || [];
+
+
 
         const profile = await Profile.create({
-
             userId,
-            username,
+
+            username: username.trim(),
             uid,
             age,
             avatar,
             banner,
             bio,
-            country,
-            languages,
+            country: country.trim(),
             role,
+            languages,
+
             socialLinks: {
                 instagram: socialLinks?.instagram || "",
                 discord: socialLinks?.discord || "",
@@ -162,44 +151,38 @@ export const createProfile = async (req: AuthRequest, res: Response) => {
 
             stats: {
                 currentRank: stats?.currentRank || "",
-                kdRatio: stats?.kdRatio || 0,
-                headshotPercentage: stats?.headshotPercentage || 0,
+                kdRatio: Number(stats?.kdRatio) || 0,
+                headshotPercentage: Number(stats?.headshotPercentage) || 0,
             },
 
             experience: {
-                level: experience?.level || 1,
-                yearsPlaying: experience?.yearsPlaying || 0,
-                esportsExperience: experience?.esportsExperience || 0,
+                level: Number(experience?.level) || 1,
+                yearsPlaying: Number(experience?.yearsPlaying) || 0,
+                esportsExperience: Number(experience?.esportsExperience) || 0,
             },
 
             availability: {
-                status: availability?.status || "looking for team",
+                status: availability?.status || "looking for team"
             },
 
             clips:
-                clips?.map((clip: any) => ({
-                    title: clip.title || "",
-                    clipUrl: clip.clipUrl || "",
-                    thumbnailUrl: clip.thumbnailUrl || "",
-                })) || [],
-
-            achievements:
-                achievements?.map(
-                    (achievement: any) => ({
-                        title: achievement.title || "",
-                        image: achievement.image || "",
+                clips?.map(
+                    (clip: any) => ({
+                        title: clip?.title || "",
+                        clipUrl: clip?.clipUrl || "",
                     })
                 ) || [],
 
+            achievements: mappedAchievements,
+
             teamHistory:
-                teamHistory?.map((team: any) => ({
-                    teamName:
-                        team.teamName || "",
-                    role:
-                        team.role || "",
-                    duration:
-                        team.duration || "",
-                })) || [],
+                teamHistory?.map(
+                    (team: any) => ({
+                        teamName: team?.teamName || "",
+                        role: team?.role || "",
+                        duration: team?.duration || "",
+                    })
+                ) || [],
             profileCompleted: true,
         });
 
@@ -306,40 +289,134 @@ export const getAllProfiles = async (req: Request, res: Response) => {
     }
 };
 
+
 export const updateProfile = async (req: AuthRequest, res: Response) => {
-
     try {
-
         const userId = req.user?._id;
 
         if (!userId) {
-            return res.status(401).json({ message: "Unauthorized" });
+            return res.status(401).json({
+                success: false,
+                message: "Unauthorized",
+            });
         }
-
-
-        const updateData = req.body;
 
         const profile = await Profile.findOne({ userId });
 
-
         if (!profile) {
-            return res.status(404).json({ message: "Profile not found" });
+            return res.status(404).json({
+                success: false,
+                message: "Profile not found",
+            });
         }
 
-        const updatedProfile = await Profile.findOneAndUpdate(
+        const { username, avatar, banner, bio, country, role, } = req.body;
 
-            { userId },
+        const uid = Number(req.body.uid);
+        const age = Number(req.body.age);
 
-            {
-                $set: updateData
-            },
+        const languages = req.body.languages ? JSON.parse(req.body.languages) : [];
 
-            {
-                new: true,
-                runValidators: true
-            }
-        );
+        const socialLinks = req.body.socialLinks ? JSON.parse(req.body.socialLinks) : {};
 
+        const stats = req.body.stats ? JSON.parse(req.body.stats) : {};
+
+        const experience = req.body.experience ? JSON.parse(req.body.experience) : {};
+
+        const availability = req.body.availability ? JSON.parse(req.body.availability) : {};
+
+        const clips = req.body.clips ? JSON.parse(req.body.clips) : [];
+
+        const achievements = req.body.achievements ? JSON.parse(req.body.achievements) : [];
+
+        const teamHistory = req.body.teamHistory ? JSON.parse(req.body.teamHistory) : [];
+
+        const uploadedImages = (req.files as Express.Multer.File[]) || [];
+
+        let uploadIndex = 0;
+
+        const mappedAchievements =
+            achievements.map(
+                (achievement: any) => {
+
+                    let imageUrl = achievement?.image || "";
+
+                    if (
+                        achievement?.hasNewImage &&
+                        uploadedImages[uploadIndex]
+                    ) {
+                        imageUrl = uploadedImages[uploadIndex].path;
+                        uploadIndex++;
+                    }
+
+                    return {
+                        title: achievement?.title?.trim() || "",
+                        image: imageUrl,
+                    };
+                }
+            );
+
+        const updatedProfile =
+            await Profile.findOneAndUpdate(
+                { userId },
+                {
+                    $set: {
+                        username: username?.trim() || "",
+                        uid: uid || profile.uid,
+                        age: age || profile.age,
+                        avatar: avatar || "",
+                        banner: banner || "",
+                        bio: bio || "",
+                        country: country || "",
+                        role: role || "",
+                        languages,
+
+                        socialLinks: {
+                            instagram: socialLinks?.instagram || "",
+                            discord: socialLinks?.discord || "",
+                        },
+
+                        stats: {
+                            currentRank: stats?.currentRank || "",
+                            kdRatio: Number(stats?.kdRatio) || 0,
+                            headshotPercentage: Number(stats?.headshotPercentage) || 0,
+                        },
+                        experience: {
+                            level: Number(experience?.level) || 1,
+                            yearsPlaying: Number(experience?.yearsPlaying) || 0,
+                            esportsExperience: Number(experience?.esportsExperience) || 0,
+                        },
+                        availability: {
+                            status: availability?.status || "looking for team",
+                        },
+                        clips:
+                            clips?.map(
+                                (
+                                    clip: any
+                                ) => ({
+                                    title: clip?.title || "",
+                                    clipUrl: clip?.clipUrl || "",
+                                })
+                            ) || [],
+
+                        achievements: mappedAchievements,
+                        teamHistory:
+                            teamHistory?.map(
+                                (
+                                    team: any
+                                ) => ({
+                                    teamName: team?.teamName || "",
+                                    role: team?.role || "",
+                                    duration: team?.duration || "",
+                                })
+                            ) || [],
+                    },
+                },
+                {
+                    returnDocument: "after",
+                    runValidators: true,
+                }
+            );
 
         const isCompleted =
             updatedProfile?.avatar &&
@@ -347,24 +424,27 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
             updatedProfile?.country &&
             updatedProfile?.role;
 
-
-        if (isCompleted) {
+        if (
+            updatedProfile &&
+            isCompleted
+        ) {
             updatedProfile.profileCompleted = true;
+
             await updatedProfile.save();
         }
 
         return res.status(200).json({
-            message: "Profile updated successfully",
-            updatedProfile
+            success: true,
+            message:
+                "Profile updated successfully",
+            data: updatedProfile,
         });
-
-
-
     } catch (error) {
+        console.error(error);
 
-        console.log(error);
         return res.status(500).json({
-            message: "Server Error"
+            success: false,
+            message: "Server Error",
         });
     }
-}
+};
