@@ -15,7 +15,7 @@ export const createProfile = async (req: AuthRequest, res: Response) => {
                 success: false,
                 message: "Unauthorized",
             });
-        }
+        } 
 
         const existingProfile =
             await Profile.findOne({ userId });
@@ -148,23 +148,19 @@ export const createProfile = async (req: AuthRequest, res: Response) => {
                 instagram: socialLinks?.instagram || "",
                 discord: socialLinks?.discord || "",
             },
-
             stats: {
                 currentRank: stats?.currentRank || "",
                 kdRatio: Number(stats?.kdRatio) || 0,
                 headshotPercentage: Number(stats?.headshotPercentage) || 0,
             },
-
             experience: {
                 level: Number(experience?.level) || 1,
                 yearsPlaying: Number(experience?.yearsPlaying) || 0,
                 esportsExperience: Number(experience?.esportsExperience) || 0,
             },
-
             availability: {
                 status: availability?.status || "looking for team"
             },
-
             clips:
                 clips?.map(
                     (clip: any) => ({
@@ -174,7 +170,6 @@ export const createProfile = async (req: AuthRequest, res: Response) => {
                 ) || [],
 
             achievements: mappedAchievements,
-
             teamHistory:
                 teamHistory?.map(
                     (team: any) => ({
@@ -197,7 +192,7 @@ export const createProfile = async (req: AuthRequest, res: Response) => {
         console.log(error);
         return res.status(500).json({
             success: false,
-            message: "Server Error",
+            message: "Server Error", 
         });
     }
 };
