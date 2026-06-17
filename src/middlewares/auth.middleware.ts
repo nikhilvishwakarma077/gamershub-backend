@@ -5,11 +5,16 @@ import { User } from "../models/user.model.js";
 
 export interface AuthRequest extends Request {
     user?: any;
+    file?: Express.Multer.File;
+    files?:
+    | Express.Multer.File[]
+    | { [fieldname: string]: Express.Multer.File[] };
+
 }
 
-export const protect = async (req: AuthRequest,res: Response,next: NextFunction) => {
+export const protect = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-       
+
         const token = req.cookies.token;
 
         if (!token) {
@@ -19,7 +24,7 @@ export const protect = async (req: AuthRequest,res: Response,next: NextFunction)
             });
         }
 
-    
+
         if (!process.env.JWT_SECRET) {
             throw new Error("JWT_SECRET not defined");
         }
@@ -48,9 +53,9 @@ export const protect = async (req: AuthRequest,res: Response,next: NextFunction)
     }
 };
 
-export const admin = (req: AuthRequest,res: Response,next: NextFunction) => {
+export const admin = (req: AuthRequest, res: Response, next: NextFunction) => {
 
-   
+
     if (!req.user) {
         return res.status(401).json({
             success: false,
