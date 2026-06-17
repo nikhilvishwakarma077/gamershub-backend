@@ -424,8 +424,6 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
             isCompleted
         ) {
             updatedProfile.profileCompleted = true;
-
-            await updatedProfile.save();
         }
 
         return res.status(200).json({
