@@ -111,8 +111,9 @@ export const getMyPlayerRequests = async (req: AuthRequest,res: Response) => {
         }
 
         const myPlayerRequests = await PlayerRequest.find({ userId })
-            .sort({ createdAt: -1 })
-            .populate('userId', 'username');  
+        .sort({ createdAt: -1 })
+        .populate('userId', 'username')
+        .populate('profileId', 'username avatar')
 
         return res.status(200).json({
             message: "My Player Requests Fetched Successfully",
