@@ -78,7 +78,9 @@ export const getAllPlayerRequests = async (req: Request,res: Response) => {
         const playerRequests = await PlayerRequest
             .find()
             .populate("userId", "username email")
+            .populate("profileId", "username avatar")
             .sort({ createdAt: -1 });
+        
 
         return res.status(200).json({
 
@@ -92,7 +94,7 @@ export const getAllPlayerRequests = async (req: Request,res: Response) => {
         console.log(error);
         return res.status(500).json({
             message: "Server Error"
-        });
+        }); 
     }
 };
 

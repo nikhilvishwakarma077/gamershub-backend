@@ -12,7 +12,7 @@ const playerRequestSchema = new Schema<IPlayerRequest>(
         profileId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Profile",
-            required: true
+            required: true 
         },
 
         role: {
