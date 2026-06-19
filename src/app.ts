@@ -20,7 +20,7 @@ app.use(cookieParser());
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://gamershub-frontend-two.vercel.app"
+    "https://gamershub-ffm.vercel.app"
   ],
   credentials: true
 }));
