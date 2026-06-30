@@ -4,6 +4,7 @@ import express from "express";
 import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/auth.route.js"
 import profileRoutes from "./routes/profile.route.js"
+import clipRoutes from "./routes/clip.routes.js"
 import playerRequestRoutes from "./routes/playerRequest.route.js"
 import { protect } from "./middlewares/auth.middleware.js";
 import cors from "cors";
@@ -38,5 +39,6 @@ app.get("/", protect, (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/player-requests", playerRequestRoutes);
+app.use("/api/clips", clipRoutes);
 
 export default app; 

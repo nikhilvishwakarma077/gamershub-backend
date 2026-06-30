@@ -12,6 +12,7 @@ export interface Stats {
 }
 
 export interface Clip {
+    _id: any;
     title: string;
     clipUrl: string;
     uploadedAt: Date;
