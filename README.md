@@ -10,6 +10,12 @@ https://github.com/nikhilvishwakarma077/gamershub-backend
 
 ---
 
+# 🚀 Live Demo
+
+🔗 https://gamershub-ffm.vercel.app/
+
+---
+
 # ✨ Features
 
 * JWT Authentication
