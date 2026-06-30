@@ -1,8 +1,16 @@
-# GamersHub Backend
+# 🎮 GamersHub Backend
 
-REST API for the GamersHub esports networking platform.
+REST API powering GamersHub.
 
-## Features
+> ⚠️ This repository contains only the backend server.
+
+Frontend Repository
+
+https://github.com/nikhilvishwakarma077/gamershub-backend
+
+---
+
+# ✨ Features
 
 * JWT Authentication
 * HTTP-only Cookie Based Sessions
@@ -14,18 +22,67 @@ REST API for the GamersHub esports networking platform.
 * Role-based Authorization
 * RESTful API Architecture
 
-## Tech Stack
+---
 
-* Node.js
-* Express.js
-* TypeScript
-* MongoDB
-* Mongoose
-* JWT
-* Bcrypt
-* Cookie Parser
+# 🛠 Tech Stack
 
-## Installation
+Frontend
+
+- React
+- Typescript
+- Vite
+- TailwindCSS
+- React Router
+- Axios
+- Cloudinary
+- React Hot Toast
+
+Backend
+
+- Node.js
+- Express
+- MongoDB
+- Typescript
+- JWT
+- Cloudinary
+
+Deployment
+
+- Vercel
+- Render
+
+---
+
+
+# 🏗 Architecture
+
+```
+Frontend
+
+    ↓
+
+Express
+
+    ↓
+
+Controllers
+
+    ↓
+
+Services
+
+    ↓
+
+MongoDB
+
+    ↓
+
+Cloudinary
+```
+
+---
+
+# Installation
 
 ```bash
 git clone <backend-repository-url>
@@ -34,7 +91,7 @@ cd gamershub-backend
 npm install
 ```
 
-## Environment Variables
+# Environment Variables
 
 Create a `.env` file in the root directory.
 
@@ -48,25 +105,27 @@ JWT_SECRET=your_secret_key
 NODE_ENV=development
 ```
 
-## Run Development Server
+# Run Development Server
 
 ```bash
 npm run dev
 ```
 
-## Build Project
+# Build Project
 
 ```bash
 npm run build
 ```
 
-## Run Production Build
+# Run Production Build
 
 ```bash
 npm start
 ```
 
-## API Modules
+---
+
+# API Modules
 
 ### Authentication
 
@@ -90,16 +149,20 @@ npm start
 * Get All Requests
 * Get My Requests
 
-## Deployment
+---
 
-### Backend
+# 📄 License
 
-* Render
+MIT License
 
-### Database
+---
 
-* MongoDB Atlas
-
-## Author
+# 👨‍💻 Author
 
 Nikhil Vishwakarma
+
+[Portfolio](https://portfolio-nikhil077.vercel.app/)
+
+[GitHub](https://github.com/nikhilvishwakarma077)
+
+[LinkedIn](https://www.linkedin.com/in/nikhil-vishwakarma-874776376)
