@@ -1,21 +1,8 @@
 import { Request, Response } from "express";
 import { Profile } from "../models/profile.model.js";
+import { ClipResponse } from "../types/clip.types.js";
 
-interface ClipResponse {
-    clipId: string;
-    profileId: string;
 
-    title: string;
-    clipUrl: string;
-    uploadedAt: Date;
-
-    username: string;
-    avatar: string;
-    role: string;
-
-    currentRank: string;
-    kdRatio: number;
-}
 
 
 export const getAllClips = async (
@@ -31,8 +18,6 @@ export const getAllClips = async (
                 username: 1,
                 avatar: 1,
                 role: 1,
-                "stats.currentRank": 1,
-                "stats.kdRatio": 1,
                 clips: 1
             }
         ).lean();
@@ -47,8 +32,8 @@ export const getAllClips = async (
 
         const allClips: ClipResponse[] = profiles.flatMap((profile) =>
             profile.clips.map((clip) => ({
-                clipId: clip._id.toString(),
-                profileId: profile._id.toString(),
+                clipId: clip._id,
+                profileId: profile._id,
 
                 title: clip.title,
                 clipUrl: clip.clipUrl,
@@ -58,8 +43,6 @@ export const getAllClips = async (
                 avatar: profile.avatar,
                 role: profile.role,
 
-                currentRank: profile.stats.currentRank,
-                kdRatio: profile.stats.kdRatio
             }))
         );
 
